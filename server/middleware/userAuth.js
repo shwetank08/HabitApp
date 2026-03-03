@@ -1,4 +1,5 @@
 import JWT from "jsonwebtoken";
+import User from "../model/user.js";
 
 export const isLoggedIn = async (req, res, next) => {
     try{

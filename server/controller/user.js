@@ -1,4 +1,4 @@
-import User from "../models/User.js";
+import User from "../model/user.js";
 import cookieToken from "../utils/cookieToken.js";
 
 export const signin = async (req, res) => {
