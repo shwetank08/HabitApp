@@ -94,7 +94,7 @@ export const updateUser = async (req, res) => {
         if (!getuser) {
             return res.status(404).json({ message: "User not found" });
         }
-        const updateTheUser = await User.findByIdAndUpdate(getuser, req.body, { new: true, runValidators: true });
+        const updateTheUser = await User.findByIdAndUpdate(getuser, req.body, { returnDocument: "after", runValidators: true });
         res.status(200).json({ message: "User updated successfully", user: updateTheUser });
     } catch (error) {
         res.status(500).json({ message: "Failed to update user", details: error.message });
