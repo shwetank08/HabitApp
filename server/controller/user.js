@@ -21,19 +21,22 @@ export const signin = async (req, res) => {
 export const signup = async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        
+
         if(!name || !email || !password) {
             return res.status(400).json({ message: "Please provide all required fields" });
         }
-        
+
         const existingUser = await User.findOne({ email });
-        if (existingUser) {
+
+        if (existingUser) {            
             return res.status(400).json({ message: "Email already in use" });
         }
 
         const newuser = await User.create({ name, email, password });
         cookieToken(newuser, res);
     }catch (error) {
+        console.log(error);
+        
         res.status(500).json({ message: "signup failed", details: error.message });
     }
 }

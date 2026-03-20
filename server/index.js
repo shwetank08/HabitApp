@@ -12,12 +12,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-    origin: "http://localhost:5000",
+    origin: true,
     credentials: true,
 }));
 app.use(express.json());
 app.use(cookieParser());
-app.use("/api", userRoutes);
+app.use('/api', userRoutes);
 
 app.get("/", (req, res) => {
     res.send("Welcome to the Habbit App API");

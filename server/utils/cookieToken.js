@@ -5,6 +5,7 @@ const cookieToken = (user, res) => {
     };
     const token = user.generateJWT();
     user.password = undefined;
+    
     res.status(200).cookie("token", token, option).json({
         success: true, token, user
     });
