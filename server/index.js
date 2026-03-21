@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import userRoutes from "./routes/user.js";
+import habitRoutes from "./routes/habit.js";
 
 dotenv.config();    
 
@@ -18,6 +19,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api', userRoutes);
+app.use('/api', habitRoutes);
 
 app.get("/", (req, res) => {
     res.send("Welcome to the Habbit App API");
