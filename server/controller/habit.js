@@ -12,13 +12,13 @@ export const createHabit = async (req, res) => {
         if(!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        const habit = await Habit.create({
+        const habit = await Habit.create({    
             user: user.id,
             name,
             description,
             frequency
         });
-        res.status(201).json(habit);
+        res.status(201).json(habit);   
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
