@@ -2,8 +2,9 @@ import HabitLog from "../model/habitLog.js";
 
 export const upsertHabitLog = async (req, res) => {
   try {
-    const { habitId, date, status, value, note } = req.body;
+    const { date, status, value, note } = req.body;
     const userId = req.user.id;
+    const habitId = req.query
 
     const normalizeDate = new Date(date); // to prevent multiple entries for the same day due to time differences
     normalizeDate.setUTCHours(0, 0, 0, 0); // UTC timezone for consistency
