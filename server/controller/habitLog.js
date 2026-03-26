@@ -4,13 +4,13 @@ export const upsertHabitLog = async (req, res) => {
   try {
     const { date, status, value, note } = req.body;
     const userId = req.user.id;
-    const habitId = req.query
+    const {habitid} = req.params
 
     const normalizeDate = new Date(date); // to prevent multiple entries for the same day due to time differences
     normalizeDate.setUTCHours(0, 0, 0, 0); // UTC timezone for consistency
 
     const updatedData = {
-      habit: habitId,
+      habit: habitid,
       user: userId,
       date: normalizeDate,
       status: status || "COMPLETED",
@@ -25,7 +25,7 @@ export const upsertHabitLog = async (req, res) => {
     }
 
     const log = await HabitLog.findOneAndUpdate(
-      { habit: habitId, user: userId, date: normalizeDate },
+      { habit: habitid, user: userId, date: normalizeDate },
       updatedData,
       { new: true, upsert: true, setDefaultsOnInsert: true },
     );
@@ -68,11 +68,11 @@ export const getHabitLogsByDate = async (req, res) => {
 
 export const getHabitLogsByHabitId = async (req, res) => {
   try {
-    const { habitId } = req.params;
+    const { habitid } = req.params;
     const userId = req.user.id;
     const logs = await HabitLog.find({
       user: userId,
-      habit: habitId,
+      habit: habitid,
     });
     res.status(200).json({
       success: true,
@@ -90,6 +90,24 @@ export const getHabitLogsByHabitId = async (req, res) => {
 export const streaksRange = async (req, res) => {
     try {
         const {startDate, endDate} = req.query;
+
+        if (!startDate || !endDate) {
+            return res.status(400).json({
+                success: false,
+                message: "startDate and endDate query parameters are required in YYYY-MM-DD format"
+            });
+        }
+
+        startDate = new Date(startDate);
+        endDate = new Date(endDate);
+
+        if(isNaN(startDate) || isNaN(endDate)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid date format. Please use YYYY-MM-DD."
+            });
+        }
+
         const userId = req.user.id;
         const logs = await HabitLog.find({
             user: userId,
