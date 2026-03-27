@@ -4,7 +4,7 @@ export const upsertHabitLog = async (req, res) => {
   try {
     const { date, status, value, note } = req.body;
     const userId = req.user.id;
-    const {habitid} = req.params
+    const { habitid } = req.params;
 
     const normalizeDate = new Date(date); // to prevent multiple entries for the same day due to time differences
     normalizeDate.setUTCHours(0, 0, 0, 0); // UTC timezone for consistency
@@ -88,43 +88,74 @@ export const getHabitLogsByHabitId = async (req, res) => {
 };
 
 export const streaksRange = async (req, res) => {
-    try {
-        const {startDate, endDate} = req.query;
+  try {
+    const { startDate, endDate } = req.query;
 
-        if (!startDate || !endDate) {
-            return res.status(400).json({
-                success: false,
-                message: "startDate and endDate query parameters are required in YYYY-MM-DD format"
-            });
-        }
-
-        startDate = new Date(startDate);
-        endDate = new Date(endDate);
-
-        if(isNaN(startDate) || isNaN(endDate)) {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid date format. Please use YYYY-MM-DD."
-            });
-        }
-
-        const userId = req.user.id;
-        const logs = await HabitLog.find({
-            user: userId,
-            date: {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
-            },
-        }).sort({ date: 1 });
-        res.status(200).json({
-            success: true,
-            data: logs
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false, 
-            message: "Error in fetching habit logs for streaks",
-            details: error.message
-        });
+    if (!startDate || !endDate) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "startDate and endDate query parameters are required in YYYY-MM-DD format",
+      });
     }
+
+    const queryStartDate = new Date(startDate);
+    const queryEndDate = new Date(endDate);
+
+    if (isNaN(queryStartDate) || isNaN(queryEndDate)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid date format. Please use YYYY-MM-DD.",
+      });
+    }
+
+    queryStartDate.setUTCHours(0, 0, 0, 0);
+    queryEndDate.setUTCHours(0, 0, 0, 0);
+    queryEndDate.setUTCDate(queryEndDate.getUTCDate() + 1); // if queried on 25th should include entire day except 12 am on 26th
+
+    const userId = req.user.id;
+    const logs = await HabitLog.find({
+      user: userId,
+      date: {
+        $gte: new Date(queryStartDate),
+        $lte: new Date(queryEndDate),
+      },
+    }).sort({ date: 1 });
+
+    let currStreak = 0;
+    let maxStreak = 0;
+    let prevDate = null;
+
+    for (let log of logs) {
+      if (log.status !== "COMPLETED") {
+        continue;
+      }
+      const currDate = new Date(log.date);
+      if (!prevDate) {
+        currStreak = 1;
+      } else {
+        const diffInTime = (currDate - prevDate) / (1000 * 60 * 60 * 24);
+        if (diffInTime === 1) {
+          currStreak += 1;
+        } else {
+          currStreak = 1;
+        }
+      }
+
+      maxStreak = Math.max(maxStreak, currStreak);
+      prevDate = currDate;
+    }
+    res.status(200).json({
+      success: true,
+      data: logs,
+      currStreak,
+      maxStreak,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error in fetching habit logs for streaks",
+      details: error.message,
+    });
   }
+};
