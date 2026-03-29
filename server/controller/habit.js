@@ -16,7 +16,8 @@ export const createHabit = async (req, res) => {
             user: user.id,
             name,
             description,
-            frequency
+            frequency,
+            days: req.body.days || [],
         });
         res.status(201).json(habit);   
     } catch (error) {
@@ -51,6 +52,17 @@ export const deleteHabits = async (req, res) => {
 export const getHabitById = async (req, res) => {     
     try {
         const habit = await Habit.findById(req.params.id);  
+        if (!habit) {
+            return res.status(404).json({ message: "Habit not found" });
+        }
+        res.status(200).json(habit);
+    } catch (error) {
+        res.status(500).json({ message: "error in fetching habit", details: error.message });
+    }       
+}
+export const getAllHabit = async (req, res) => {     
+    try {
+        const habit = await Habit.find({ user: req.user.id });  
         if (!habit) {
             return res.status(404).json({ message: "Habit not found" });
         }
