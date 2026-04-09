@@ -1,14 +1,8 @@
-import React from "react";
-import Signin from "./pages/Signin";
-import Signup from "./pages/Signup";
+import { RouterProvider } from "react-router-dom";
+import router from "./router";
 
-const App = () => {
-  return (
-    <div className="flex flex-col">
-      <Signin />
-      <Signup />
-    </div>
-  );
-};
+function App() {
+  return <RouterProvider router={router} />;
+}
 
 export default App;
