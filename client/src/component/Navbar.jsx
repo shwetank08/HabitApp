@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { LogOut } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -28,9 +29,9 @@ const Navbar = () => {
             </Link>
             <button
               onClick={handleLogout}
-              className="bg-white/20 px-3 py-1 rounded-full text-white"
+              className="bg-white/20 px-3 py-1 rounded-full text-zinc-500 hover:bg-red-400 hover:text-white transition-colors"
             >
-              Logout
+              <LogOut size={18} />
             </button>
           </>
         ) : (
@@ -50,7 +51,7 @@ const Navbar = () => {
 
       {/* Mobile Toggle Button */}
       <button
-        className="md:hidden text-white text-2xl"
+        className="md:hidden text-zinc-900 text-2xl"
         onClick={() => setIsOpen(!isOpen)}
       >
         ☰
@@ -63,21 +64,21 @@ const Navbar = () => {
             <>
               <Link
                 to="/"
-                className="text-white/80 hover:text-white"
+                className="text-zinc-500 hover:text-zinc-900"
                 onClick={() => setIsOpen(false)}
               >
                 Dashboard
               </Link>
               <Link
                 to="/add-habit"
-                className="text-white/80 hover:text-white"
+                className="text-zinc-500 hover:text-zinc-900"
                 onClick={() => setIsOpen(false)}
               >
                 Add Habit
               </Link>
               <button
                 onClick={handleLogout}
-                className="bg-white/20 px-3 py-1 rounded-full text-white"
+                className="bg-white/20 px-3 py-1 rounded-full text-zinc-900"
               >
                 Logout
               </button>
@@ -86,14 +87,14 @@ const Navbar = () => {
             <>
               <Link
                 to="/signin"
-                className="text-white/80 hover:text-white"
+                className="text-zinc-500 hover:text-zinc-900"
                 onClick={() => setIsOpen(false)}
               >
                 Login
               </Link>
               <Link
                 to="/signup"
-                className="text-white/80 hover:text-white"
+                className="text-zinc-500 hover:text-zinc-900"
                 onClick={() => setIsOpen(false)}
               >
                 Signup
