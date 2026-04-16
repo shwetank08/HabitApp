@@ -9,12 +9,10 @@ const MainLayout = () => {
 
       <div className="md:ml-64 min-h-screen bg-stone-100 px-4 flex flex-col">
         
-        {/* Navbar now part of flow */}
         <div className="p-4">
           <Navbar />
         </div>
 
-        {/* Content naturally below */}
         <main className="p-6 max-w-7xl mx-auto w-full flex-1">
           <Outlet />
         </main>

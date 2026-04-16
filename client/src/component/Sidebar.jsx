@@ -7,6 +7,7 @@ import {
   PlusCircle,
   BarChart2,
   Settings,
+  LogOut,
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -43,7 +44,7 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-screen w-64 bg-gray-900 border-r border-gray-800 z-50 text-white p-6 transform transition-transform duration-300
+        className={`fixed top-0 left-0 h-screen w-64 bg-gray-900 border-r border-gray-800 z-50 text-white p-6 overflow-y-auto transform transition-transform duration-300
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
         md:translate-x-0`}
       >
@@ -84,6 +85,12 @@ const Sidebar = () => {
             );
           })}
         </ul>
+        <div className="mt-10 md:hidden">
+          <button className="w-full flex items-center gap-3 py-2 px-4 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 transition">
+            <LogOut size={18} />
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
     </>
   );

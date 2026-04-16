@@ -12,7 +12,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="h-16 flex justify-between items-center px-6 rounded-2xl text-zinc-900 bg-white/10 backdrop-blur-md border border-white/20 shadow-lg">
+    <nav className="hidden md:flex h-16 justify-between items-center px-6 rounded-2xl text-zinc-900 bg-white/10 backdrop-blur-md border border-white/20 shadow-lg">
       <h1 className="text-lg font-semibold">
         <Link to="/">HabitTracker</Link>
       </h1>
