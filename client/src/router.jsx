@@ -6,6 +6,8 @@ import AuthLayout from "./layout/AuthLayout";
 import Dashboard from "./pages/Dashboard";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import EditHabit from "./pages/EditHabit";
+
 
 const router = createBrowserRouter([
   {
@@ -20,6 +22,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Dashboard /> },
       { path: "/dashboard", element: <Dashboard /> },
+      { path: "/habit/:id", element: <EditHabit /> },
     ],
   },
 ]);
