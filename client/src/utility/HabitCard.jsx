@@ -21,7 +21,7 @@ const HabitCard = ({ habit, onEdit, onToggleComplete }) => {
               {habit.description}
             </p>
           )}
-
+          {console.log(habit.currentStreak)}
           <p className="text-sm text-gray-400">
             🔥 Streak: {habit.streak || 0}
           </p>

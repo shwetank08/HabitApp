@@ -1,4 +1,5 @@
 import HabitLog from "../model/habitLog.js";
+import calculateStreaks from "../utils/calculateStreaks.js";
 
 export const upsertHabitLog = async (req, res) => {
   try {
@@ -73,10 +74,18 @@ export const getHabitLogsByHabitId = async (req, res) => {
     const logs = await HabitLog.find({
       user: userId,
       habit: habitid,
-    });
+      status: "COMPLETED"
+    }).sort({date:1})
+
+    const habit = await Habit.findById(habitid);
+
+    const streakData = calculateStreaks(logs,habit.frequency);
+
     res.status(200).json({
       success: true,
       data: logs,
+      currentStreak: streakData.currentStreak,
+      maxStreak: streakData.maxStreak,
     });
   } catch (error) {
     res.status(500).json({
