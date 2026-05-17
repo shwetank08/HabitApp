@@ -1,44 +1,50 @@
-const calculateStreaks = async(logs, frequency) => {
-    let currentStreak = 0
-    let maxStreak = 0
-    let prevDate = null
+const calculateStreaks = (logs, frequency) => {
+  let currentStreak = 0;
+  let maxStreak = 0;
+  let prevDate = null;
 
-    for (let log of logs){
-        const currDate = new Date(log.date)
-        if(!prevDate){
-            currentStreak = 1;
-        }
-        else{
-            const diffinDays = (currDate-prevDate)/(1000*60*60*24)
-            let isConsecutive = false
+  for (let log of logs) {
+    const currDate = new Date(log.date);
 
-            if(frequency == "DAILY"){
-                isConsecutive = diffinDays === 1
-            }
-            else if(frequency == "WEEKLY"){
-                isConsecutive = diffinDays <= 7
-            }
-            else if(frequency == "MONTHLY"){
-                let prevMonth = prevDate.getUTCMonth();
-                let currMonth = prevDate.getUTCMonth();
-                let prevYear = prevDate.getUTCFullYear();
-                let currYear = prevDate.getUTCFullYear();
+    let isConsecutive = false;
 
-                isConsecutive = (prevYear === currYear && currMonth === prevMonth+1) || (prevYear+1 === currYear && prevMonth === 11 && currMonth === 0)
-            }
-        }
+    if (!prevDate) {
+      currentStreak = 1;
+    } else {
+      const diffInDays = (currDate - prevDate) / (1000 * 60 * 60 * 24);
 
-        if(isConsecutive){
-            currentStreak++;
-        }else{
-            currentStreak = 1
-        }
-        maxStreak = Math.max(currentStreak,maxStreak)
-        prevDate = currDate
+      if (frequency === "DAILY") {
+        isConsecutive = diffInDays === 1;
+      } else if (frequency === "WEEKLY") {
+        isConsecutive = diffInDays <= 7;
+      } else if (frequency === "MONTHLY") {
+        const prevMonth = prevDate.getUTCMonth();
+        const currMonth = currDate.getUTCMonth();
+
+        const prevYear = prevDate.getUTCFullYear();
+        const currYear = currDate.getUTCFullYear();
+
+        isConsecutive =
+          (prevYear === currYear && currMonth === prevMonth + 1) ||
+          (prevYear + 1 === currYear && prevMonth === 11 && currMonth === 0);
+      }
+
+      if (isConsecutive) {
+        currentStreak++;
+      } else {
+        currentStreak = 1;
+      }
     }
-    return{
-        currentStreak, maxStreak
-    }
-}
+
+    maxStreak = Math.max(currentStreak, maxStreak);
+
+    prevDate = currDate;
+  }
+
+  return {
+    currentStreak,
+    maxStreak,
+  };
+};
 
 export default calculateStreaks;

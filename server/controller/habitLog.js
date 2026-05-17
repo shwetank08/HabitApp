@@ -1,5 +1,6 @@
 import HabitLog from "../model/habitLog.js";
 import calculateStreaks from "../utils/calculateStreaks.js";
+import Habit from "../model/habit.js";
 
 export const upsertHabitLog = async (req, res) => {
   try {

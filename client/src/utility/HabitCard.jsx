@@ -1,8 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, CheckCircle, Info } from "lucide-react";
+import { habitLogService } from "../service/habitLogService";
 
 const HabitCard = ({ habit, onEdit, onToggleComplete }) => {
   const [showDesc, setShowDesc] = useState(false);
+  const [streak, setStreak] = useState([]);
+
+  useEffect(() => {
+    fetchHabitStreaks(habit._id);
+  }, [habit]);
+
+  const fetchHabitStreaks = async (habitId) => {
+    try {
+      const res = await habitLogService.getHabitLogsByHabitId(habitId);
+      setStreak(res.data.maxStreak);
+      console.log(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div
@@ -21,9 +37,9 @@ const HabitCard = ({ habit, onEdit, onToggleComplete }) => {
               {habit.description}
             </p>
           )}
-          {console.log(habit.currentStreak)}
+          {console.log(streak)}
           <p className="text-sm text-gray-400">
-            🔥 Streak: {habit.streak || 0}
+            🔥 Streak: {streak || 0}
           </p>
         </div>
 
@@ -44,7 +60,7 @@ const HabitCard = ({ habit, onEdit, onToggleComplete }) => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onToggleComplete(habit._id);
+              onToggleComplete(habit);
             }}
             className={`p-2 rounded-lg transition ${
               habit.completedToday

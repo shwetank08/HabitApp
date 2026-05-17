@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { habitService } from "../service/habitService";
 import HabitCard from "../utility/HabitCard";
 import { useNavigate } from "react-router-dom";
+import { habitLogService } from "../service/habitLogService";
 
 const Dashboard = () => {
   const [habits, setHabits] = useState([]);
@@ -14,21 +15,11 @@ const Dashboard = () => {
     fetchHabits();
   }, []);
 
-
-  const fetchHabitStreaks = async (habitId) => {
-    try {
-      const res = await habitLogService.getHabitLogsByHabitId(habitId);
-      setStreak(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const fetchHabits = async () => {
     try {
       const res = await habitService.getAllHabits();
       setHabits(res.data);
-      console.log(res.data);
+      console.log(res);
     } catch (err) {
       console.error(err);
     }
@@ -38,14 +29,35 @@ const Dashboard = () => {
     navigate(`/habit/${habit._id}`);
   };
 
-  const handleToggleComplete = (id) => {
+  const handleToggleComplete = async(habit) => {
+
+    const previous = habit.completedToday;
+
     setHabits((prev) =>
       prev.map((h) =>
-        h._id === id
-          ? { ...h, completedToday: !h.completedToday }
+        h._id === habit._id
+          ? { ...h, completedToday: !previous }
           : h
       )
     );
+
+    try {
+      await habitLogService.upsertHabitLog(habit._id, {
+        date: new Date(),
+        status: previous ? "MISSED" : "COMPLETED",
+      });
+
+      fetchHabits();
+    }catch(err){
+      console.error(err);
+      setHabits((prev) =>
+        prev.map((h) =>
+          h._id === habit._id
+            ? { ...h, completedToday: previous }
+            : h
+        )
+      );
+    }
   };
 
   // FILTER HABITS BASED ON FREQUENCY
@@ -126,7 +138,7 @@ const Dashboard = () => {
           </h2>
         </div>
 
-        <div className="bg-white/10 border border-white/20 backdrop-blur-lg rounded-2xl p-5 shadow-lg">
+       <div className="bg-white/10 border border-white/20 backdrop-blur-lg rounded-2xl p-5 shadow-lg">
           <p className="text-gray-400 text-sm mb-1">
             Progress
           </p>
