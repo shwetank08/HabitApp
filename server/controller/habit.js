@@ -77,6 +77,8 @@ export const getAllHabit = async (req, res) => {
     const userId = req.user.id;
     const habits = await Habit.find({ user: userId });
     const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
     today.setUTCHours(0, 0, 0, 0);
 
     const frontendData = await Promise.all(
@@ -85,6 +87,10 @@ export const getAllHabit = async (req, res) => {
           habit: habit._id,
           user: userId,
           status: "COMPLETED",
+          date: {
+            $gte: today,
+            $lt: tomorrow,
+          }
         }).sort({ date: 1 });
 
         const streakData = calculateStreaks(logs, habit.frequency);

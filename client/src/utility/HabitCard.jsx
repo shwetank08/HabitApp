@@ -13,7 +13,7 @@ const HabitCard = ({ habit, onEdit, onToggleComplete }) => {
   const fetchHabitStreaks = async (habitId) => {
     try {
       const res = await habitLogService.getHabitLogsByHabitId(habitId);
-      setStreak(res.data.maxStreak);
+      setStreak(res.data.currentStreak);
       console.log(res.data);
     } catch (err) {
       console.error(err);
