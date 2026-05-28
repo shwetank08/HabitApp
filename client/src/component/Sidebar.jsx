@@ -16,7 +16,6 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: "Dashboard", icon: <LayoutDashboard size={18} /> },
-    { name: "My Habits", icon: <CheckSquare size={18} /> },
     { name: "Add Habit", icon: <PlusCircle size={18} /> },
     { name: "Analytics", icon: <BarChart2 size={18} /> },
     { name: "Settings", icon: <Settings size={18} /> },
