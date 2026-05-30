@@ -1,133 +1,165 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { habitService } from '../service/habitService';
+import React, { useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { habitService } from "../service/habitService";
 
 const AddHabit = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    frequency: 'DAILY', // Set matching uppercase default value
+
+  const allDays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    frequency: "",
   });
-  const [error, setError] = useState('');
+
+  const [selectedDays, setSelectedDays] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Handle Input Changes
+  const toggleDay = (day) => {
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+    );
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+
+    setForm((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    if (name === "frequency" && value !== "WEEKLY") {
+      setSelectedDays([]);
+    }
   };
 
-  // Handle Form Submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
-    // Validation
-    if (!formData.name.trim() || !formData.frequency) {
-      setError('Name and frequency are required.');
-      setLoading(false);
-      return;
-    }
+    const payload = {
+      ...form,
+      days: form.frequency === "WEEKLY" ? selectedDays : [],
+    };
 
-    try {
-      // Send data to habit service
-      await habitService.createHabit(formData); 
-      // Redirect back to dashboard after successful addition
-      navigate('/dashboard'); 
-    } catch (err) {
-      console.error(err);
-      setError(err?.response?.data?.message || 'Failed to create habit. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    console.log("New Habit Payload:", payload);
+
+    const createNewHabit = async () => {
+      try {
+        await habitService.addHabit(payload);
+        navigate("/dashboard");
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
+    };
+
+    createNewHabit();
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-900 to-black text-white p-4 sm:p-6 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white p-4 sm:p-6">
+      {/* HEADER */}
+      <div className="flex items-center gap-3 mb-6">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="p-2 rounded-lg bg-white/10 hover:bg-white/20"
+        >
+          <ArrowLeft size={18} />
+        </button>
+        <h1 className="text-2xl sm:text-3xl font-bold">Add Habit</h1>
+      </div>
+
       
-      <div className="w-full max-w-md bg-white/10 border border-white/20 backdrop-blur-lg rounded-2xl p-6 sm:p-8 shadow-xl">
-        
-        {/* HEADER */}
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold">Add New Habit</h1>
-          <p className="text-gray-400 text-sm mt-1">Start small, think big. Consistency is key! 🎯</p>
-        </div>
-
-        {/* ERROR MESSAGE */}
-        {error && (
-          <div className="mb-4 p-3 rounded-xl bg-red-500/20 border border-red-500/40 text-red-200 text-sm">
-            {error}
-          </div>
-        )}
-
-        {/* FORM */}
+      <div className="max-w-xl mx-auto bg-white/10 backdrop-blur-lg border border-white/20 p-6 rounded-2xl shadow-lg">
         <form onSubmit={handleSubmit} className="space-y-5">
-          
-          {/* HABIT NAME */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-300">Habit Name</label>
+          <div>
+            <label className="text-sm text-gray-300">Name</label>
             <input
-              type="text"
               name="name"
-              value={formData.name}
+              value={form.name}
               onChange={handleChange}
-              placeholder="e.g., Read 10 pages, Meditate"
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+              placeholder="Enter habit name"
+              className="w-full mt-1 p-3 rounded-lg bg-white/10 border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white"
               required
             />
           </div>
 
-          {/* DESCRIPTION */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-300">Description</label>
+          <div>
+            <label className="text-sm text-gray-300">Description</label>
             <textarea
               name="description"
-              value={formData.description}
+              value={form.description}
               onChange={handleChange}
-              placeholder="Why do you want to build this habit?"
+              placeholder="Describe your habit..."
+              className="w-full mt-1 p-3 rounded-lg bg-white/10 border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white resize-none"
               rows="4"
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors resize-none"
-            ></textarea>
+            />
           </div>
 
-          {/* FREQUENCY */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-300">Frequency</label>
+          <div>
+            <label className="text-sm text-gray-300">Frequency</label>
             <select
               name="frequency"
-              value={formData.frequency}
+              value={form.frequency}
               onChange={handleChange}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-purple-500 transition-colors"
+              className="w-full mt-1 p-3 rounded-lg bg-white/10 border border-white/20 focus:outline-none text-white"
+              required
             >
+              <option className="text-black" value="">Select frequency</option>
               <option className="text-black" value="DAILY">Daily</option>
               <option className="text-black" value="WEEKLY">Weekly</option>
               <option className="text-black" value="MONTHLY">Monthly</option>
+              <option className="text-black" value="YEARLY">Yearly</option>
             </select>
           </div>
 
-          {/* ACTION BUTTONS */}
-          <div className="flex gap-3 pt-2">
+          {form.frequency === "WEEKLY" && (
+            <div>
+              <label className="block text-sm text-gray-300 mb-2">
+                Select Days
+              </label>
+
+              <div className="flex flex-wrap gap-2">
+                {allDays.map((day) => (
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => toggleDay(day)}
+                    className={`px-3 py-1.5 rounded-lg text-sm border transition ${
+                      selectedDays.includes(day)
+                        ? "bg-indigo-500 text-white border-indigo-500"
+                        : "bg-white/10 text-gray-300 border-white/20 hover:bg-white/20"
+                    }`}
+                  >
+                    {day}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="flex-1 border border-white/20 hover:bg-white/5 text-white font-medium py-2.5 rounded-xl transition-all"
+              className="px-4 py-2 rounded-lg bg-gray-600 hover:bg-gray-500 transition"
             >
               Cancel
             </button>
+
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-medium py-2.5 rounded-xl shadow-lg shadow-purple-600/20 transition-all flex items-center justify-center"
+              className="px-5 py-2 rounded-lg bg-indigo-500 hover:bg-indigo-600 font-medium transition disabled:opacity-50"
             >
               {loading ? "Creating..." : "Add Habit"}
             </button>
           </div>
-
         </form>
       </div>
     </div>
