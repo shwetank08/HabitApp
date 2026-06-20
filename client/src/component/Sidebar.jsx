@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom"; // 1. Import NavLink
 import {
   Menu,
   X,
   LayoutDashboard,
-  CheckSquare,
   PlusCircle,
   BarChart2,
   Settings,
@@ -12,13 +12,12 @@ import {
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const currentPath = "Dashboard";
 
   const menuItems = [
-    { name: "Dashboard", icon: <LayoutDashboard size={18} /> },
-    { name: "Add Habit", icon: <PlusCircle size={18} /> },
-    { name: "Analytics", icon: <BarChart2 size={18} /> },
-    { name: "Settings", icon: <Settings size={18} /> },
+    { name: "Dashboard", icon: <LayoutDashboard size={18} />, path: "/" },
+    { name: "Add Habit", icon: <PlusCircle size={18} />, path: "/habit/add" },
+    { name: "Analytics", icon: <BarChart2 size={18} />, path: "/habit/analytics" },
+    { name: "Settings", icon: <Settings size={18} />, path: "/settings" },
   ];
 
   return (
@@ -60,30 +59,29 @@ const Sidebar = () => {
         {/* Menu */}
         <ul className="space-y-3">
           {menuItems.map((item, index) => {
-            const isActive = item.name === currentPath;
-
             return (
               <li key={index}>
-                <a
-                  href="#"
-                  className={`flex items-center gap-3 py-2 px-4 rounded-xl transition-all
-          ${
-            isActive
-              ? "bg-indigo-500/20 text-indigo-400"
-              : "hover:bg-gray-800 hover:translate-x-1"
-          }`}
+                {/* 3. Replaced <a> with <NavLink> */}
+                <NavLink
+                  to={item.path}
+                  onClick={() => setIsOpen(false)} // Closes mobile drawer on link click
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 py-2 px-4 rounded-xl transition-all ${
+                      isActive
+                        ? "bg-indigo-500/20 text-indigo-400"
+                        : "text-gray-400 hover:bg-gray-800 hover:text-white hover:translate-x-1"
+                    }`
+                  }
                 >
-                  <span
-                    className={`${isActive ? "text-indigo-400" : "text-gray-400"}`}
-                  >
-                    {item.icon}
-                  </span>
+                  {/* The icon color adjusts based on the parent link state naturally via Tailwind text utilities */}
+                  <span>{item.icon}</span>
                   <span>{item.name}</span>
-                </a>
+                </NavLink>
               </li>
             );
           })}
         </ul>
+        
         <div className="mt-10 md:hidden">
           <button className="w-full flex items-center gap-3 py-2 px-4 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 transition">
             <LogOut size={18} />

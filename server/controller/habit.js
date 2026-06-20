@@ -87,10 +87,6 @@ export const getAllHabit = async (req, res) => {
           habit: habit._id,
           user: userId,
           status: "COMPLETED",
-          date: {
-            $gte: today,
-            $lt: tomorrow,
-          }
         }).sort({ date: 1 });
 
         const streakData = calculateStreaks(logs, habit.frequency);
