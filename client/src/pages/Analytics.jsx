@@ -36,7 +36,6 @@ const AnalyticsPage = () => {
 
   return (
     <div className="p-6 bg-black min-h-screen text-white">
-      {/* Page Title Header */}
       <div>
         <h2 className="text-2xl font-bold">Analytics Dashboard</h2>
         <p className="text-sm text-gray-400">
@@ -44,13 +43,10 @@ const AnalyticsPage = () => {
         </p>
       </div>
 
-      {/* 1. Global KPIs (The cards you already have) */}
       <AnalyticsProgress habits={habits}/>
 
-      {/* 2. Middle Section: Visual Charts */}
       <ChartSection />
 
-      {/* 3. Bottom Section: Insights & Individual Leaderboard */}
       <PerformanceSection />
     </div>
   );

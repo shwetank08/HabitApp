@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user.js";
 import habitRoutes from "./routes/habit.js";
 import habitLogRoutes from "./routes/habitLog.js";
+import analyticsRoutes from "./routes/analytics.js";
 
 dotenv.config();    
 
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use('/api', userRoutes);
 app.use('/api', habitRoutes);
 app.use('/api', habitLogRoutes);
+app.use('/api', analyticsRoutes);
 
 app.get("/", (req, res) => {
     res.send("Welcome to the Habbit App API");

@@ -1,5 +1,4 @@
 import React from "react";
-// Add this instead:
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from "recharts/umd/Recharts";
 // Mock Data for Weekly Activity Trend
 const weeklyTrendData = [
@@ -20,7 +19,6 @@ const categoryData = [
   { name: "Mindset", value: 10 },
 ];
 
-// Tailwind-matching colors for the Donut Chart slices
 const COLORS = ["#6366f1", "#a855f7", "#ec4899", "#14b8a6"];
 
 const ChartSection = () => {
