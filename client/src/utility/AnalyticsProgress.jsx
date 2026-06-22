@@ -1,7 +1,7 @@
 import React from "react";
 
 const AnalyticsProgress = ({ habits }) => {
-  console.log("habits from analytics", habits);
+  // console.log("habits from analytics", habits);
 
   const formatFrequency = (habit) => {
     if (habit.frequency === "DAILY") {
@@ -44,7 +44,7 @@ const AnalyticsProgress = ({ habits }) => {
     return "bg-red-500";
   };
 
-  console.log("habitsAnalyticsData", habitsAnalyticsData);
+  // console.log("habitsAnalyticsData", habitsAnalyticsData);
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mt-8">
       <h3 className="text-xl font-bold text-white mb-4">

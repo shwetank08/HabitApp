@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import ChartSection from "../utility/ChartSection";
 import PerformanceSection from "../utility/PerformanceSection";
 import AnalyticsProgress from "../utility/AnalyticsProgress";
-import {habitService} from "../service/habitService";
+import { habitService } from "../service/habitService";
+import { analyticsService } from "../service/getAnalytics";
 
 const AnalyticsPage = () => {
   const [habits, setHabits] = useState([]);
@@ -13,25 +14,26 @@ const AnalyticsPage = () => {
     const fetchHabits = async () => {
       try {
         const res = await habitService.getAllHabits();
-        console.log("Fetched Habits:", res.data);
+        console.log("Fetched Habits Analytics Section:", res.data);
         setHabits(res.data);
       } catch (err) {
         console.error(err);
       }
     };
 
-    // const fetchHabitStats = async () => {
-    //   try {
-    //     const response = await fetch("/api/habits/stats");
-    //     const data = await response.json();
-    //     setHabitStats(data);
-    //   } catch (error) {
-    //     console.error("Error fetching habit stats:", error);
-    //   }
-    // };
+    const fetchHabitStats = async () => {
+      try {
+        console.log("Fetching habit stats...");
+        const response = await analyticsService.getAnalytics();
+        console.log("Fetched Habit Stats:", response.data);
+        setHabitStats(response.data);
+      } catch (error) {
+        console.error("Error fetching habit stats:", error);
+      }
+    };
 
     fetchHabits();
-    // fetchHabitStats();
+    fetchHabitStats();
   }, []);
 
   return (
@@ -45,7 +47,7 @@ const AnalyticsPage = () => {
 
       <AnalyticsProgress habits={habits}/>
 
-      <ChartSection />
+      <ChartSection statistics = {habitStats}/>
 
       <PerformanceSection />
     </div>

@@ -14,7 +14,6 @@ const HabitCard = ({ habit, onEdit, onToggleComplete }) => {
     try {
       const res = await habitLogService.getHabitLogsByHabitId(habitId);
       setStreak(res.data.currentStreak);
-      console.log(res.data);
     } catch (err) {
       console.error(err);
     }
@@ -37,7 +36,6 @@ const HabitCard = ({ habit, onEdit, onToggleComplete }) => {
               {habit.description}
             </p>
           )}
-          {console.log(streak)}
           <p className="text-sm text-gray-400">
             🔥 Streak: {streak || 0}
           </p>
