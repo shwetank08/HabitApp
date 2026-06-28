@@ -11,16 +11,6 @@ import {
   Cell,
 } from "recharts/umd/Recharts";
 import { analyticsService } from "../service/getAnalytics";
-// Mock Data for Weekly Activity Trend
-const weeklyTrendData = [
-  { day: "Mon", completions: 2 },
-  { day: "Tue", completions: 4 },
-  { day: "Wed", completions: 1 },
-  { day: "Thu", completions: 3 },
-  { day: "Fri", completions: 5 },
-  { day: "Sat", completions: 2 },
-  { day: "Sun", completions: 4 },
-];
 
 // Mock Data for Habit Category Breakdown
 const categoryData = [
@@ -33,6 +23,9 @@ const categoryData = [
 const COLORS = ["#6366f1", "#a855f7", "#ec4899", "#14b8a6"];
 
 const ChartSection = ({ statistics }) => {
+
+  const { overview, weeklyTrend } = statistics;
+
   return (
     <div className="grid mt-8">
       <div className="lg:col-span-2 bg-gray-900 border border-gray-800 p-6 rounded-2xl flex flex-col">
@@ -51,7 +44,7 @@ const ChartSection = ({ statistics }) => {
         <div className="w-full h-64 mt-auto">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={weeklyTrendData}
+              data={weeklyTrend}
               margin={{ top: 10, right: 10, left: -25, bottom: 0 }}
             >
               <defs>

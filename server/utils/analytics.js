@@ -42,12 +42,38 @@ export const getWeeklyTrend = async (userId) => {
     { $sort: { _id: 1 } },
   ]);
 
-  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-  return trendData.map((item) => ({
-    day: daysOfWeek[item._id - 1],
-    completions: item.completions,
-  }));
+  const mongoDayMap = {
+    1: "Sun",
+    2: "Mon",
+    3: "Tue",
+    4: "Wed",
+    5: "Thu",
+    6: "Fri",
+    7: "Sat",
+  };
+
+  const weeklyTrend = [
+    { day: "Mon", completions: 0 },
+    { day: "Tue", completions: 0 },
+    { day: "Wed", completions: 0 },
+    { day: "Thu", completions: 0 },
+    { day: "Fri", completions: 0 },
+    { day: "Sat", completions: 0 },
+    { day: "Sun", completions: 0 },
+  ];
+
+  trendData.forEach((item) => {
+    const day = mongoDayMap[item._id];
+
+    const index = weeklyTrend.findIndex((d) => d.day === day);
+
+    if (index !== -1) {
+      weeklyTrend[index].completions = item.completions;
+    }
+  });
+  return weeklyTrend;
 };
 export const getCompletionBreakdown = async (userId) => {
   const habitLogs = await HabitLog.aggregate([
@@ -64,4 +90,46 @@ export const getCompletionBreakdown = async (userId) => {
       },
     },
   ]);
+};
+
+export const getInsightData = async (userId) => {
+  const habits = await Habit.find({
+    user: new mongoose.Types.ObjectId(userId),
+  });
+  console.log("habits", habits);
+  const bestHabit = habits.reduce((best, habit) => {
+    const completionRate = habit.completionRate || 0;
+    return completionRate > (best.completionRate || 0) ? habit : best;
+  }, {});
+
+  const worstHabit = habits.reduce((worst, habit) => {
+    const completionRate = habit.completionRate || 0;
+    return completionRate < (worst.completionRate || Infinity) ? habit : worst;
+  }, {});
+
+  const streakHabit = habits.reduce((best, habit) =>
+    habit.currentStreak > best.currentStreak ? habit : best,
+  );
+
+  console.log("Best Habit:", bestHabit);
+  console.log("Worst Habit:", worstHabit);
+  console.log("Streak Habit:", streakHabit);
+
+  return [
+    {
+      type: "success",
+      title: "Best Performer",
+      description: `${bestHabit.name} has the highest completion rate (${bestHabit.completionRate}%).`,
+    },
+    {
+      type: "warning",
+      title: "Needs Attention",
+      description: `${worstHabit.name} has the lowest completion rate (${worstHabit.completionRate}%).`,
+    },
+    {
+      type: "info",
+      title: "Longest Streak",
+      description: `${streakHabit.name} is on a ${streakHabit.currentStreak}-day streak.`,
+    },
+  ];
 };
